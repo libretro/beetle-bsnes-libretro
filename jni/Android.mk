@@ -49,39 +49,6 @@ CORE_SOURCES := $(CORE_DIR)/cart.cpp \
 	$(CORE_DIR)/susie.cpp \
 	$(CORE_DIR)/system.cpp
 TARGET_NAME := mednafen_lynx_libretro
-else ifeq ($(core), gba)
-   core = gba
-   NEED_BPP = 32
-   NEED_BLIP = 1
-	NEED_STEREO_SOUND = 1
-   NEED_CRC32 = 1
-   CORE_DEFINE := -DWANT_GBA_EMU
-   CORE_DIR := $(MEDNAFEN_DIR)/gba
-
-CORE_SOURCES := $(CORE_DIR)/arm.cpp \
-	$(CORE_DIR)/bios.cpp \
-	$(CORE_DIR)/eeprom.cpp \
-	$(CORE_DIR)/flash.cpp \
-	$(CORE_DIR)/GBA.cpp \
-	$(CORE_DIR)/GBAinline.cpp \
-	$(CORE_DIR)/Gfx.cpp \
-	$(CORE_DIR)/Globals.cpp \
-	$(CORE_DIR)/Mode0.cpp \
-	$(CORE_DIR)/Mode1.cpp \
-	$(CORE_DIR)/Mode2.cpp \
-	$(CORE_DIR)/Mode3.cpp \
-	$(CORE_DIR)/Mode4.cpp \
-	$(CORE_DIR)/Mode5.cpp \
-	$(CORE_DIR)/RTC.cpp \
-	$(CORE_DIR)/Sound.cpp \
-	$(CORE_DIR)/sram.cpp \
-	$(CORE_DIR)/thumb.cpp
-
-HW_SOUND_SOURCES := $(MEDNAFEN_DIR)/hw_sound/gb_apu/Gb_Apu.cpp \
-						$(MEDNAFEN_DIR)/hw_sound/gb_apu/Gb_Apu_State.cpp \
-						$(MEDNAFEN_DIR)/hw_sound/gb_apu/Gb_Oscs.cpp
-EXTRA_CORE_INCDIR = $(MEDNAFEN_DIR)/hw_sound/ $(MEDNAFEN_DIR)/include/blip
-TARGET_NAME := mednafen_$(core)_libretro
 else ifeq ($(core), snes)
    core = snes
    NEED_BPP = 32

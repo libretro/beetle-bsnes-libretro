@@ -73,20 +73,6 @@ static Deinterlacer deint;
 #define FB_HEIGHT 102
 static bool is_pal = false;
 
-#elif defined(WANT_GBA_EMU)
-#define MEDNAFEN_CORE_NAME_MODULE "gba"
-#define MEDNAFEN_CORE_NAME "Mednafen VBA-M"
-#define MEDNAFEN_CORE_VERSION "v0.9.36"
-#define MEDNAFEN_CORE_EXTENSIONS "gba|agb|bin"
-#define MEDNAFEN_CORE_TIMING_FPS 59.73
-#define MEDNAFEN_CORE_GEOMETRY_BASE_W (game->nominal_width)
-#define MEDNAFEN_CORE_GEOMETRY_BASE_H (game->nominal_height)
-#define MEDNAFEN_CORE_GEOMETRY_MAX_W 240
-#define MEDNAFEN_CORE_GEOMETRY_MAX_H 160
-#define MEDNAFEN_CORE_GEOMETRY_ASPECT_RATIO (4.0 / 3.0)
-#define FB_WIDTH 240
-#define FB_HEIGHT 160
-
 #elif defined(WANT_SNES_EMU)
 #define MEDNAFEN_CORE_NAME_MODULE "snes"
 #define MEDNAFEN_CORE_NAME "Mednafen bSNES"
@@ -207,18 +193,6 @@ static void set_volume (uint32_t *ptr, unsigned number)
 static void check_variables(void)
 {
    struct retro_variable var = {0};
-
-#if defined (WANT_GBA_EMU)
-   var.key = "gba_hle";
-
-   if (environ_cb(RETRO_ENVIRONMENT_GET_VARIABLE, &var) && var.value)
-   {
-      if (strcmp(var.value, "enabled") == 0)
-         setting_gba_hle = 1;
-      else if (strcmp(var.value, "disabled") == 0)
-         setting_gba_hle = 0;
-   }
-#endif
 }
 
 #if defined(WANT_LYNX_EMU)
@@ -226,12 +200,6 @@ static void check_variables(void)
 #define MAX_PLAYERS 1
 #define MAX_BUTTONS 9
 static uint8_t input_buf[MAX_PLAYERS][2] = {0};
-
-#elif defined(WANT_GBA_EMU)
-
-#define MAX_PLAYERS 1
-#define MAX_BUTTONS 11
-static uint16_t input_buf;
 
 #elif defined(WANT_SNES_EMU)
 
@@ -255,9 +223,6 @@ static void hookup_ports(bool force)
       return;
 
 #if defined(WANT_LYNX_EMU)
-   currgame->SetInput(0, "gamepad", &input_buf);
-#elif defined(WANT_GBA_EMU)
-   // Possible endian bug ...
    currgame->SetInput(0, "gamepad", &input_buf);
 #elif defined(WANT_SNES_EMU)
    // Possible endian bug ...
@@ -290,10 +255,6 @@ bool retro_load_game(const struct retro_game_info *info)
    environ_cb(RETRO_ENVIRONMENT_GET_OVERSCAN, &overscan);
 
    set_basename(info->path);
-
-#if defined(WANT_GBA_EMU)
-   check_variables();
-#endif
 
    game = MDFNI_LoadGame(MEDNAFEN_CORE_NAME_MODULE, info->path);
    if (!game)
@@ -354,34 +315,6 @@ static void update_input(void)
       input_buf[j][0] = (input_state >> 0) & 0xff;
       input_buf[j][1] = (input_state >> 8) & 0xff;
    }
-#elif defined(WANT_GBA_EMU)
-   input_buf = 0;
-   static unsigned map[] = {
-      RETRO_DEVICE_ID_JOYPAD_A, //A button
-      RETRO_DEVICE_ID_JOYPAD_B, //B button
-      RETRO_DEVICE_ID_JOYPAD_SELECT,
-      RETRO_DEVICE_ID_JOYPAD_START,
-      RETRO_DEVICE_ID_JOYPAD_RIGHT,
-      RETRO_DEVICE_ID_JOYPAD_LEFT,
-      RETRO_DEVICE_ID_JOYPAD_UP,
-      RETRO_DEVICE_ID_JOYPAD_DOWN,
-      RETRO_DEVICE_ID_JOYPAD_R,
-      RETRO_DEVICE_ID_JOYPAD_L,
-   };
-
-   for (unsigned i = 0; i < MAX_BUTTONS; i++)
-      input_buf |= map[i] != -1u &&
-         input_state_cb(0, RETRO_DEVICE_JOYPAD, 0, map[i]) ? (1 << i) : 0;
-
-#ifdef MSB_FIRST
-   union {
-      uint8_t b[2];
-      uint16_t s;
-   } u;
-   u.s = input_buf;
-   input_buf = u.b[0] | u.b[1] << 8;
-#endif
-
 #elif defined(WANT_SNES_EMU)
 
    static unsigned map[] = {
@@ -583,13 +516,6 @@ void retro_set_environment(retro_environment_t cb)
 {
    environ_cb = cb;
 
-#if defined(WANT_GBA_EMU)
-   static const struct retro_variable vars[] = {
-      { "gba_hle", "HLE bios emulation; enabled|disabled" },
-      { NULL, NULL },
-   };
-   cb(RETRO_ENVIRONMENT_SET_VARIABLES, (void*)vars);
-#endif
 }
 
 void retro_set_audio_sample(retro_audio_sample_t cb)

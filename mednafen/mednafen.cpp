@@ -55,9 +55,6 @@ extern MDFNGI EmulatedSNES;
 extern MDFNGI EmulatedGB;
 #elif defined WANT_GB_EMU
 #define MDFNGI_CORE &EmulatedGB
-#elif defined WANT_GBA_EMU
-extern MDFNGI EmulatedGBA;
-#define MDFNGI_CORE &EmulatedGBA
 #elif defined WANT_PCE_EMU
 extern MDFNGI EmulatedPCE;
 #define MDFNGI_CORE &EmulatedPCE
