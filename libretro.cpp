@@ -58,7 +58,6 @@ static bool PrevInterlaced;
 static Deinterlacer deint;
 #endif
 
-#if defined(WANT_SNES_EMU)
 #define MEDNAFEN_CORE_NAME_MODULE "snes"
 #define MEDNAFEN_CORE_NAME "Mednafen bSNES"
 #define MEDNAFEN_CORE_VERSION "v0.9.26"
@@ -71,7 +70,6 @@ static Deinterlacer deint;
 #define MEDNAFEN_CORE_GEOMETRY_ASPECT_RATIO (4.0 / 3.0)
 #define FB_WIDTH 512
 #define FB_HEIGHT 512
-#endif
 
 
 #define FB_MAX_HEIGHT FB_HEIGHT
@@ -180,19 +178,10 @@ static void check_variables(void)
    struct retro_variable var = {0};
 }
 
-#if defined(WANT_SNES_EMU)
-
 #define MAX_PLAYERS 5
 #define MAX_BUTTONS 14
 static uint8_t input_buf[MAX_PLAYERS][2];
 
-#else
-
-#define MAX_PLAYERS 1
-#define MAX_BUTTONS 7
-
-static uint16_t input_buf[1];
-#endif
 
 static void hookup_ports(bool force)
 {
@@ -201,14 +190,8 @@ static void hookup_ports(bool force)
    if (initial_ports_hookup && !force)
       return;
 
-#if defined(WANT_SNES_EMU)
-   // Possible endian bug ...
    for (unsigned i = 0; i < MAX_PLAYERS; i++)
       currgame->SetInput(i, "gamepad", &input_buf[i][0]);
-#else
-   // Possible endian bug ...
-   currgame->SetInput(0, "gamepad", &input_buf[0]);
-#endif
 
    initial_ports_hookup = true;
 }
@@ -269,7 +252,6 @@ void retro_unload_game()
 static void update_input(void)
 {
    MDFNGI *currgame = (MDFNGI*)game;
-#if defined(WANT_SNES_EMU)
 
    static unsigned map[] = {
       RETRO_DEVICE_ID_JOYPAD_B,
@@ -304,26 +286,6 @@ static void update_input(void)
       input_buf[j][1] = (input_state >> 8) & 0xff;
 #endif
    }
-#else
-   input_buf[0] = 0;
-   static unsigned map[] = {
-      RETRO_DEVICE_ID_JOYPAD_UP,
-      RETRO_DEVICE_ID_JOYPAD_DOWN,
-      RETRO_DEVICE_ID_JOYPAD_LEFT,
-      RETRO_DEVICE_ID_JOYPAD_RIGHT,
-      RETRO_DEVICE_ID_JOYPAD_A, //A button
-      RETRO_DEVICE_ID_JOYPAD_B, //B button
-      RETRO_DEVICE_ID_JOYPAD_START, //Option button
-   };
-
-   for (unsigned j = 0; j < MAX_PLAYERS; j++)
-   {
-      for (unsigned i = 0; i < MAX_BUTTONS; i++)
-         input_buf[j] |= map[i] != -1u &&
-            input_state_cb(j, RETRO_DEVICE_JOYPAD, 0, map[i]) ? (1 << i) : 0;
-   }
-
-#endif
 }
 
 static uint64_t video_frames, audio_frames;
@@ -637,48 +599,3 @@ void MDFND_Sleep(unsigned int time)
 {
    retro_sleep(time);
 }
-
-#ifdef WANT_THREADING
-MDFN_Thread *MDFND_CreateThread(int (*fn)(void *), void *data)
-{
-   return (MDFN_Thread*)sthread_create((void (*)(void*))fn, data);
-}
-
-void MDFND_WaitThread(MDFN_Thread *thr, int *val)
-{
-   sthread_join((sthread_t*)thr);
-
-   if (val)
-   {
-      *val = 0;
-      fprintf(stderr, "WaitThread relies on return value.\n");
-   }
-}
-
-void MDFND_KillThread(MDFN_Thread *)
-{
-   fprintf(stderr, "Killing a thread is a BAD IDEA!\n");
-}
-
-MDFN_Mutex *MDFND_CreateMutex()
-{
-   return (MDFN_Mutex*)slock_new();
-}
-
-void MDFND_DestroyMutex(MDFN_Mutex *lock)
-{
-   slock_free((slock_t*)lock);
-}
-
-int MDFND_LockMutex(MDFN_Mutex *lock)
-{
-   slock_lock((slock_t*)lock);
-   return 0;
-}
-
-int MDFND_UnlockMutex(MDFN_Mutex *lock)
-{
-   slock_unlock((slock_t*)lock);
-   return 0;
-}
-#endif

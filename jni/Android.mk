@@ -31,25 +31,6 @@ LOCAL_MODULE    := libretro
 # CD for CD-based systems in order to prevent file access delays/hiccups
 CACHE_CD = 0
 
-ifeq ($(core), lynx)
-   core = lynx
-   NEED_BPP = 32
-   NEED_BLIP = 1
-   NEED_STEREO_SOUND = 1
-   CORE_DEFINE := -DWANT_LYNX_EMU
-   CORE_DIR := $(MEDNAFEN_DIR)/lynx
-   NEED_CRC32 = 1
-
-CORE_SOURCES := $(CORE_DIR)/cart.cpp \
-	$(CORE_DIR)/c65c02.cpp \
-	$(CORE_DIR)/memmap.cpp \
-	$(CORE_DIR)/mikie.cpp \
-	$(CORE_DIR)/ram.cpp \
-	$(CORE_DIR)/rom.cpp \
-	$(CORE_DIR)/susie.cpp \
-	$(CORE_DIR)/system.cpp
-TARGET_NAME := mednafen_lynx_libretro
-else ifeq ($(core), snes)
    core = snes
    NEED_BPP = 32
    NEED_BLIP = 1
@@ -107,7 +88,6 @@ HW_SOUND_SOURCES := $(MEDNAFEN_DIR)/sound/Fir_Resampler.cpp
 EXTRA_CORE_INCDIR = $(MEDNAFEN_DIR)/hw_sound/ $(MEDNAFEN_DIR)/include/blip $(MEDNAFEN_DIR)/snes/src/lib
 TARGET_NAME := mednafen_snes_libretro
 LDFLAGS += -ldl
-endif
 
 ifeq ($(NEED_STEREO_SOUND), 1)
 SOUND_DEFINE := -DWANT_STEREO_SOUND
