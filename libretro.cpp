@@ -20,8 +20,6 @@ static retro_environment_t environ_cb;
 static retro_input_poll_t input_poll_cb;
 static retro_input_state_t input_state_cb;
 
-static retro_rumble_interface rumble;
-
 static bool overscan;
 static double last_sound_rate;
 static MDFN_PixelFormat last_pixel_format;
@@ -73,11 +71,10 @@ static Deinterlacer deint;
 
 #define FB_MAX_HEIGHT FB_HEIGHT
 
-const char *mednafen_core_str = MEDNAFEN_CORE_NAME;
-
 static void check_system_specs(void)
 {
-   unsigned level = 0;
+   //FIXME/TODO - might be higher/lower
+   unsigned level = 13;
    environ_cb(RETRO_ENVIRONMENT_SET_PERFORMANCE_LEVEL, &level);
 }
 
@@ -397,9 +394,9 @@ void retro_deinit()
    if (log_cb)
    {
       log_cb(RETRO_LOG_INFO, "[%s]: Samples / Frame: %.5f\n",
-            mednafen_core_str, (double)audio_frames / video_frames);
+            MEDNAFEN_CORE_NAME, (double)audio_frames / video_frames);
       log_cb(RETRO_LOG_INFO, "[%s]: Estimated FPS: %.5f\n",
-            mednafen_core_str, (double)video_frames * 44100 / audio_frames);
+            MEDNAFEN_CORE_NAME, (double)video_frames * 44100 / audio_frames);
    }
 }
 
