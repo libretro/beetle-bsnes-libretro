@@ -81,7 +81,9 @@ LIBRETRO_SOURCES_C := $(CORE_DIR)/src/lib/libco/libco.c
 HW_SOUND_SOURCES += $(MEDNAFEN_DIR)/sound/Fir_Resampler.cpp
 EXTRA_CORE_INCDIR = -I$(MEDNAFEN_DIR)/hw_sound/ -I$(MEDNAFEN_DIR)/include/blip -I$(MEDNAFEN_DIR)/snes/src/lib
 TARGET_NAME := mednafen_snes_libretro
+ifneq ($(platform),win)
 LDFLAGS += -ldl
+endif
 
 ifeq ($(NEED_BLIP), 1)
 RESAMPLER_SOURCES += $(MEDNAFEN_DIR)/sound/Blip_Buffer.cpp
