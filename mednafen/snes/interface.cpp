@@ -78,7 +78,7 @@ static bool LoadCPalette(const char *syspalname, uint8 **ptr, uint32 num_entries
   return(ene.Errno() == ENOENT);        // Return fatal error if it's an error other than the file not being found.
  }
 
- if(!(*ptr = (uint8 *)MDFN_malloc(num_entries * 3, _("custom color map"))))
+ if(!(*ptr = (uint8 *)malloc(num_entries * 3)))
  {
   MDFN_indent(-1);
 
@@ -93,7 +93,7 @@ static bool LoadCPalette(const char *syspalname, uint8 **ptr, uint32 num_entries
   MDFN_printf(_("Error reading file: %s\n"), feof(fp) ? "EOF" : ene.StrError());
   MDFN_indent(-1);
 
-  MDFN_free(*ptr);
+  free(*ptr);
   *ptr = NULL;
   fclose(fp);
 
@@ -456,7 +456,7 @@ static void Cleanup(void)
 
  if(CustomColorMap)
  {
-  MDFN_free(CustomColorMap);
+  free(CustomColorMap);
   CustomColorMap = NULL;
  }
 
@@ -614,7 +614,7 @@ static int StateAction(StateMem *sm, int load, int data_only)
   if(!MDFNSS_StateAction(sm, 1, data_only, StateLengthCat, "LEN"))
    return(0);
 
-  ptr = (uint8 *)MDFN_calloc(1, length, _("SNES save state buffer"));
+  ptr = (uint8 *)calloc(1, length);
  
   SFORMAT StateRegs[] =
   {
