@@ -2,7 +2,6 @@
 #include "mednafen/mempatcher.h"
 #include "mednafen/git.h"
 #include "mednafen/general.h"
-#include "mednafen/md5.h"
 #ifdef NEED_DEINTERLACER
 #include	"mednafen/video/Deinterlacer.h"
 #endif
@@ -237,10 +236,9 @@ void retro_unload_game()
 
 
 
-// Hardcoded for PSX. No reason to parse lots of structures ...
-// See mednafen/psx/input/gamepad.cpp
 static void update_input(void)
 {
+   unsigned j;
    MDFNGI *currgame = (MDFNGI*)game;
 
    static unsigned map[] = {
@@ -258,10 +256,11 @@ static void update_input(void)
       RETRO_DEVICE_ID_JOYPAD_R,
    };
 
-   for (unsigned j = 0; j < MAX_PLAYERS; j++)
+   for (j = 0; j < MAX_PLAYERS; j++)
    {
+      unsigned i;
       uint16_t input_state = 0;
-      for (unsigned i = 0; i < MAX_BUTTONS; i++)
+      for (i = 0; i < MAX_BUTTONS; i++)
          input_state |= input_state_cb(j, RETRO_DEVICE_JOYPAD, 0, map[i]) ? (1 << i) : 0;
 
 #ifdef MSB_FIRST
@@ -280,8 +279,7 @@ static void update_input(void)
 
 static uint64_t video_frames, audio_frames;
 
-
-void retro_run()
+void retro_run(void)
 {
    MDFNGI *curgame = game;
 
@@ -453,26 +451,11 @@ static size_t serialize_size;
 
 size_t retro_serialize_size(void)
 {
-   MDFNGI *curgame = (MDFNGI*)game;
-   //if (serialize_size)
-   //   return serialize_size;
-
-   if (!curgame->StateAction)
-   {
-      if (log_cb)
-         log_cb(RETRO_LOG_WARN, "[mednafen]: Module %s doesn't support save states.\n", curgame->shortname);
-      return 0;
-   }
-
    StateMem st;
    memset(&st, 0, sizeof(st));
 
    if (!MDFNSS_SaveSM(&st, 0, 0, NULL, NULL, NULL))
-   {
-      if (log_cb)
-         log_cb(RETRO_LOG_WARN, "[mednafen]: Module %s doesn't support save states.\n", curgame->shortname);
       return 0;
-   }
 
    free(st.data);
    return serialize_size = st.len;
@@ -538,11 +521,7 @@ std::string MDFN_MakeFName(MakeFName_Type type, int id1, const char *cd1)
    {
       case MDFNMKF_SAV:
          ret = retro_save_directory +slash + retro_base_name +
-            std::string(".") +
-#ifndef _XBOX
-	    md5_context::asciistr(MDFNGameInfo->MD5, 0) + std::string(".") +
-#endif
-            std::string(cd1);
+            std::string(".") + std::string(cd1);
          break;
       case MDFNMKF_FIRMWARE:
          ret = retro_base_directory + slash + std::string(cd1);

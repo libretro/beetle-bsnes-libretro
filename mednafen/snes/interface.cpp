@@ -16,7 +16,6 @@
  */
 
 #include "../mednafen.h"
-#include "../md5.h"
 #include "../general.h"
 #include "src/base.hpp"
 #include "../mempatcher.h"
@@ -478,15 +477,7 @@ static int Load(const char *name, MDFNFILE *fp)
   uint8 *export_ptr;
 
   if((fp->f_size - header_adjust) > (8192 * 1024))
-  {
    throw MDFN_Error(0, _("SNES ROM image is too large."));
-  }
-
-  md5_context md5;
-
-  md5.starts();
-  md5.update(fp->f_data, fp->f_size);
-  md5.finish(MDFNGameInfo->MD5);
 
   SNES::system.init(&meowface);
 
