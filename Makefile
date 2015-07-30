@@ -56,7 +56,7 @@ ifeq ($(OSX_LT_MAVERICKS),"YES")
 endif
 else ifeq ($(platform), ios)
    TARGET := $(TARGET_NAME)_ios.dylib
-   fpic := -fPIC
+   fpic := -fPIC -DHAVE_POSIX_MEMALIGN=1
    SHARED := -dynamiclib
    LDFLAGS += $(PTHREAD_FLAGS)
    FLAGS += $(PTHREAD_FLAGS)
