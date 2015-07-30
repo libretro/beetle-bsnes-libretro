@@ -13,6 +13,10 @@
 
 #ifndef __APPLE__
 #include <malloc.h>
+
+#ifndef HAVE_POSIX_MEMALIGN
+#define HAVE_POSIX_MEMALIGN
+#endif
 #endif
 
 #ifdef __cplusplus
