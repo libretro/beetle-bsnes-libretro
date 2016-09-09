@@ -26,10 +26,6 @@ CORE_DEFINE := -DWANT_SNES_EMU
 
 TARGET_NAME := mednafen_snes
 
-ifneq ($(platform),win)
-LDFLAGS += -ldl
-endif
-
 ifeq ($(platform), unix)
    TARGET := $(TARGET_NAME)_libretro.so
    fpic := -fPIC
