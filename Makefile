@@ -201,9 +201,7 @@ WARNINGS := -Wall \
 	-Wno-sign-compare \
 	-Wno-unused-variable \
 	-Wno-unused-function \
-	-Wno-uninitialized \
-	$(NEW_GCC_WARNING_FLAGS) \
-	-Wno-strict-aliasing
+	-Wno-uninitialized
 
 ifeq ($(NO_GCC),1)
    WARNINGS :=
