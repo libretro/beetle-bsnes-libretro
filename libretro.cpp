@@ -168,7 +168,7 @@ static void check_variables(void)
 }
 
 #define MAX_PLAYERS 5
-#define MAX_BUTTONS 14
+#define MAX_BUTTONS 12 
 static uint8_t input_buf[MAX_PLAYERS][2];
 
 
