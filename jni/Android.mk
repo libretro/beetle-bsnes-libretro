@@ -42,10 +42,9 @@ include ../Makefile.common
 LDFLAGS += -ldl
 
 LOCAL_SRC_FILES += $(SOURCES_CXX) $(SOURCES_C)
-EXTRA_GCC_FLAGS := -funroll-loops
 
 ifeq ($(DEBUG),0)
-   FLAGS += -O3 $(EXTRA_GCC_FLAGS)
+   FLAGS += -O3
 else
    FLAGS += -O0 -g
 endif

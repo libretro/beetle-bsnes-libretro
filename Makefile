@@ -205,13 +205,8 @@ WARNINGS := -Wall \
 	$(NEW_GCC_WARNING_FLAGS) \
 	-Wno-strict-aliasing
 
-EXTRA_GCC_FLAGS := -funroll-loops
-
 ifeq ($(NO_GCC),1)
-	EXTRA_GCC_FLAGS :=
-	WARNINGS :=
-else
-	EXTRA_GCC_FLAGS := -g
+   WARNINGS :=
 endif
 
 OBJECTS := $(SOURCES_CXX:.cpp=.o) $(SOURCES_C:.c=.o)
@@ -219,9 +214,9 @@ OBJECTS := $(SOURCES_CXX:.cpp=.o) $(SOURCES_C:.c=.o)
 all: $(TARGET)
 
 ifeq ($(DEBUG),0)
-   FLAGS += -O2 $(EXTRA_GCC_FLAGS)
+   FLAGS += -O2 -DNDEBUG
 else
-   FLAGS += -O0
+   FLAGS += -O0 -g -DDEBUG
 endif
 
 LDFLAGS += $(fpic) $(SHARED)
