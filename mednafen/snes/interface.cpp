@@ -273,7 +273,8 @@ int16_t MeowFace::input_poll(bool port, unsigned device, unsigned index, unsigne
 
 	case SNES::Input::DeviceMouse:
 	{
-	 assert(port < 2);
+	 int port_type = port;
+	 assert(port_type < 2);
 	 switch(id)
 	 {
 	  case SNES::Input::MouseX:
