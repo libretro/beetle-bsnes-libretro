@@ -27,6 +27,11 @@ void DSP1::enable() {
       bus.map(Bus::MapDirect, 0x00, 0x1f, 0x6000, 0x7fff, *this);
       bus.map(Bus::MapDirect, 0x80, 0x9f, 0x6000, 0x7fff, *this);
     } break;
+
+    case Cartridge::DSP1Unmapped: {
+      default:
+        break;
+    }
   }
 }
 
@@ -64,6 +69,11 @@ bool DSP1::addr_decode(uint16 addr) {
     case Cartridge::DSP1HiROM: {
     //$[00-1f]:[6000-6fff] = DR, $[00-1f]:[7000-7fff] = SR
       return (addr >= 0x7000);
+    }
+
+    case Cartridge::DSP1Unmapped: {
+      default:
+        break;
     }
   }
 
