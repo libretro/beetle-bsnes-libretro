@@ -17,7 +17,7 @@ void bPPU::render_line_mode7(uint8 pri0_pos, uint8 pri1_pos) {
   if(regs.bg_enabled[bg] == false && regs.bgsub_enabled[bg] == false) return;
 
   int32 px, py;
-  int32 tx, ty, tile, palette;
+  int32 tx, ty, tile, palette = 0;
 
   int32 a = sclip<16>(cache.m7a);
   int32 b = sclip<16>(cache.m7b);
