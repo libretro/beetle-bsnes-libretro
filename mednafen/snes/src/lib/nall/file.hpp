@@ -97,7 +97,7 @@ namespace nall {
       if(!fp) return;  //file not open
       buffer_flush();
 
-      uintmax_t req_offset = file_offset;
+      intmax_t req_offset = file_offset;
       switch(mode) {
         case seek_absolute: req_offset  = offset; break;
         case seek_relative: req_offset += offset; break;
