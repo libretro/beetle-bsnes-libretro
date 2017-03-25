@@ -87,13 +87,13 @@ void bPPU::render_line_bg(uint8 pri0_pos, uint8 pri1_pos) {
     if(regs.interlace) y = (y << 1) + field();
   }
 
-  uint16 hval, vval;
-  uint16 tile_pri, tile_num;
-  uint8  pal_index, pal_num;
+  uint16 hval = 0, vval = 0;
+  uint16 tile_pri = 0, tile_num;
+  uint8  pal_index = 0, pal_num = 0;
   uint16 hoffset, voffset, opt_x, col;
-  bool   mirror_x, mirror_y;
+  bool   mirror_x = 0, mirror_y;
 
-  const uint8  *tile_ptr;
+  const uint8  *tile_ptr = 0;
   const uint16 *mtable = mosaic_table[regs.mosaic_enabled[bg] ? regs.mosaic_size : 0];
   const bool   is_opt_mode = (mode == 2 || mode == 4 || mode == 6);
   const bool   is_direct_color_mode = (regs.direct_color == true && bg == BG1 && (mode == 3 || mode == 4));
