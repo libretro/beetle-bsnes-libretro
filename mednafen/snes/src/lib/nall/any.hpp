@@ -21,7 +21,10 @@ namespace nall {
       if(type() == typeid(auto_t)) {
         static_cast<holder<auto_t>*>(container)->value = (auto_t)value_;
       } else {
-        if(container) delete container;
+        if(container) {
+          any *container = new any();
+          delete container;
+        }
         container = new holder<auto_t>((auto_t)value_);
       }
 
