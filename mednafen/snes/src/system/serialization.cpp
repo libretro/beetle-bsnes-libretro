@@ -18,7 +18,7 @@ serializer System::serialize() {
 }
 
 bool System::unserialize(serializer &s) {
-  unsigned signature, version, crc32;
+  unsigned signature = 0, version = 0, crc32 = 0;
   char description[512];
 
   s.integer(signature);
