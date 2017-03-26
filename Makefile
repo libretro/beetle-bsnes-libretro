@@ -200,8 +200,7 @@ include Makefile.common
 WARNINGS := -Wall \
 	-Wno-sign-compare \
 	-Wno-unused-variable \
-	-Wno-unused-function \
-	-Wno-uninitialized
+	-Wno-unused-function
 
 ifeq ($(NO_GCC),1)
    WARNINGS :=
