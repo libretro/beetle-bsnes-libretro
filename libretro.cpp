@@ -455,7 +455,12 @@ static size_t serialize_size;
 size_t retro_serialize_size(void)
 {
    StateMem st;
-   memset(&st, 0, sizeof(st));
+
+   st.data           = NULL;
+   st.loc            = 0;
+   st.len            = 0;
+   st.malloced       = 0;
+   st.initial_malloc = 0;
 
    if (!MDFNSS_SaveSM(&st, 0, 0, NULL, NULL, NULL))
       return 0;
@@ -467,19 +472,34 @@ size_t retro_serialize_size(void)
 bool retro_serialize(void *data, size_t size)
 {
    StateMem st;
-   memset(&st, 0, sizeof(st));
-   st.data     = (uint8_t*)data;
-   st.malloced = size;
+   bool ret          = false;
+   uint8_t *_dat     = (uint8_t*)malloc(size);
 
-   return MDFNSS_SaveSM(&st, 0, 0, NULL, NULL, NULL);
+   if (!_dat)
+      return false;
+
+   st.data           = _dat;
+   st.loc            = 0;
+   st.len            = 0;
+   st.malloced       = size;
+   st.initial_malloc = 0;
+
+   ret = MDFNSS_SaveSM(&st, 0, 0, NULL, NULL, NULL);
+
+   memcpy(data,st.data,size);
+   free(st.data);
+   return ret;
 }
 
 bool retro_unserialize(const void *data, size_t size)
 {
    StateMem st;
-   memset(&st, 0, sizeof(st));
-   st.data = (uint8_t*)data;
-   st.len  = size;
+
+   st.data           = (uint8_t*)data;
+   st.loc            = 0;
+   st.len            = size;
+   st.malloced       = 0;
+   st.initial_malloc = 0;
 
    return MDFNSS_LoadSM(&st, 0, 0);
 }
