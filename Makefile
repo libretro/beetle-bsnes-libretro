@@ -38,13 +38,13 @@ ifeq ($(platform), unix)
       IS_X86 = 1
    endif
    LDFLAGS += $(PTHREAD_FLAGS) -ldl
-   FLAGS += $(PTHREAD_FLAGS) -DHAVE_MKDIR
+   FLAGS += $(PTHREAD_FLAGS)
 else ifeq ($(platform), osx)
    TARGET := $(TARGET_NAME)_libretro.dylib
    fpic := -fPIC
    SHARED := -dynamiclib
    LDFLAGS += $(PTHREAD_FLAGS)
-   FLAGS += $(PTHREAD_FLAGS) -DHAVE_MKDIR
+   FLAGS += $(PTHREAD_FLAGS)
 ifeq ($(arch),ppc)
    ENDIANNESS_DEFINES := -DMSB_FIRST
    OLD_GCC := 1
@@ -83,8 +83,7 @@ else ifeq ($(platform), qnx)
    fpic := -fPIC
    SHARED := -lcpp -lm -shared -Wl,--no-undefined -Wl,--version-script=link.T
    #LDFLAGS += $(PTHREAD_FLAGS)
-   #FLAGS += $(PTHREAD_FLAGS) -DHAVE_MKDIR
-   FLAGS += -DHAVE_MKDIR
+   #FLAGS += $(PTHREAD_FLAGS)
    CC = qcc -Vgcc_ntoarmv7le
    CXX = QCC -Vgcc_ntoarmv7le_cpp
    AR = QCC -Vgcc_ntoarmv7le
@@ -96,7 +95,7 @@ else ifeq ($(platform), ps3)
    AR = $(CELL_SDK)/host-win32/ppu/bin/ppu-lv2-ar.exe
    ENDIANNESS_DEFINES := -DMSB_FIRST
    OLD_GCC := 1
-   FLAGS += -DHAVE_MKDIR -DARCH_POWERPC_ALTIVEC
+   FLAGS += -DARCH_POWERPC_ALTIVEC
    STATIC_LINKING = 1
 else ifeq ($(platform), sncps3)
    TARGET := $(TARGET_NAME)_libretro_ps3.a
@@ -107,7 +106,7 @@ else ifeq ($(platform), sncps3)
    CXXFLAGS += -Xc+=exceptions
    OLD_GCC := 1
    NO_GCC := 1
-   FLAGS += -DHAVE_MKDIR -DARCH_POWERPC_ALTIVEC
+   FLAGS += -DARCH_POWERPC_ALTIVEC
    STATIC_LINKING = 1
 else ifeq ($(platform), psl1ght)
    TARGET := $(TARGET_NAME)_libretro_$(platform).a
@@ -115,7 +114,6 @@ else ifeq ($(platform), psl1ght)
    CXX = $(PS3DEV)/ppu/bin/ppu-g++$(EXE_EXT)
    AR = $(PS3DEV)/ppu/bin/ppu-ar$(EXE_EXT)
    ENDIANNESS_DEFINES := -DMSB_FIRST
-   FLAGS += -DHAVE_MKDIR
    STATIC_LINKING = 1
 else ifeq ($(platform), psp1)
    TARGET := $(TARGET_NAME)_libretro_$(platform).a
@@ -123,7 +121,6 @@ else ifeq ($(platform), psp1)
    CXX = psp-g++$(EXE_EXT)
    AR = psp-ar$(EXE_EXT)
    FLAGS += -DPSP -G0
-   FLAGS += -DHAVE_MKDIR
    STATIC_LINKING = 1
 else ifeq ($(platform), xenon)
    TARGET := $(TARGET_NAME)_libretro_xenon360.a
@@ -132,7 +129,6 @@ else ifeq ($(platform), xenon)
    AR = xenon-ar$(EXE_EXT)
    ENDIANNESS_DEFINES += -D__LIBXENON__ -m32 -D__ppc__ -DMSB_FIRST
    LIBS := $(PTHREAD_FLAGS)
-   FLAGS += -DHAVE_MKDIR
    STATIC_LINKING = 1
 else ifeq ($(platform), ngc)
    TARGET := $(TARGET_NAME)_libretro_$(platform).a
@@ -142,7 +138,6 @@ else ifeq ($(platform), ngc)
    ENDIANNESS_DEFINES += -DGEKKO -DHW_DOL -mrvl -mcpu=750 -meabi -mhard-float -DMSB_FIRST
 
    EXTRA_INCLUDES := -I$(DEVKITPRO)/libogc/include
-   FLAGS += -DHAVE_MKDIR
    STATIC_LINKING = 1
 else ifeq ($(platform), wii)
    TARGET := $(TARGET_NAME)_libretro_$(platform).a
@@ -152,7 +147,6 @@ else ifeq ($(platform), wii)
    ENDIANNESS_DEFINES += -DGEKKO -DHW_RVL -mrvl -mcpu=750 -meabi -mhard-float -DMSB_FIRST
 
    EXTRA_INCLUDES := -I$(DEVKITPRO)/libogc/include
-   FLAGS += -DHAVE_MKDIR
    STATIC_LINKING = 1
 else ifneq (,$(findstring armv,$(platform)))
    TARGET := $(TARGET_NAME)_libretro.so
@@ -160,7 +154,7 @@ else ifneq (,$(findstring armv,$(platform)))
    SHARED := -shared -Wl,--no-undefined -Wl,--version-script=link.T
    CC = gcc
    LDFLAGS += $(PTHREAD_FLAGS)
-   FLAGS += $(PTHREAD_FLAGS) -DHAVE_MKDIR
+   FLAGS += $(PTHREAD_FLAGS)
    IS_X86 = 0
 ifneq (,$(findstring cortexa8,$(platform)))
    FLAGS += -marm -mcpu=cortex-a8
@@ -185,6 +179,27 @@ else ifeq ($(platform), emscripten)
    TARGET := $(TARGET_NAME)_libretro_$(platform).bc
    STATIC_LINKING = 1
 
+# Windows MSVC 2003 x86
+else ifeq ($(platform), windows_msvc2003_x86)
+	CC  = cl.exe
+	CXX = cl.exe
+
+PATH := $(shell IFS=$$'\n'; cygpath "$(VS71COMNTOOLS)../../Vc7/bin"):$(PATH)
+PATH := $(PATH):$(shell IFS=$$'\n'; cygpath "$(VS71COMNTOOLS)../IDE")
+INCLUDE := $(shell IFS=$$'\n'; cygpath "$(VS71COMNTOOLS)../../Vc7/include")
+LIB := $(shell IFS=$$'\n'; cygpath -w "$(VS71COMNTOOLS)../../Vc7/lib")
+BIN := $(shell IFS=$$'\n'; cygpath "$(VS71COMNTOOLS)../../Vc7/bin")
+
+WindowsSdkDir := $(INETSDK)
+
+export INCLUDE := $(INCLUDE);$(INETSDK)/Include;libretro-common/include/compat/msvc
+export LIB := $(LIB);$(WindowsSdkDir);$(INETSDK)/Lib
+TARGET := $(TARGET_NAME)_libretro.dll
+PSS_STYLE :=2
+LDFLAGS += -DLL
+CFLAGS += -D_CRT_SECURE_NO_DEPRECATE
+WINDOWS_VERSION=1
+
 else
    TARGET := $(TARGET_NAME)_libretro.dll
    CC = gcc
@@ -192,16 +207,19 @@ else
    IS_X86 = 1
    SHARED := -shared -Wl,--no-undefined -Wl,--version-script=link.T
    LDFLAGS += -static-libgcc -static-libstdc++ -lwinmm
-   FLAGS += -DHAVE__MKDIR
 endif
 
 include Makefile.common
 
+ifneq (,$(findstring msvc,$(platform)))
+WARNINGS :=
+else
 WARNINGS := -Wall \
 	-Wno-sign-compare \
 	-Wno-unused-variable \
 	-Wno-unused-function \
 	-Wno-uninitialized
+endif
 
 ifeq ($(NO_GCC),1)
    WARNINGS :=
