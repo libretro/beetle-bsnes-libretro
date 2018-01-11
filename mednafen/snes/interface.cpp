@@ -515,11 +515,11 @@ static int Load(const char *name, MDFNFILE *fp)
 
   ColorMap.resize(32768);
 
-  if(!LoadCPalette(NULL, &CustomColorMap, 32768))
-  {
-   Cleanup();
-   return(0);
-  }
+  //if(!LoadCPalette(NULL, &CustomColorMap, 32768))
+  //{
+   //Cleanup();
+   //return(0);
+  //}
  }
  catch(std::exception &e)
  {
