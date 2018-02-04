@@ -37,8 +37,13 @@ ifeq ($(platform), unix)
    ifneq ($(shell uname -p | grep -E '((i.|x)86|amd64)'),)
       IS_X86 = 1
    endif
+   ifneq ($(findstring Haiku,$(shell uname -s)),)
+   LDFLAGS += -lpthread -lroot
+   FLAGS += -lpthread
+   else
    LDFLAGS += $(PTHREAD_FLAGS) -ldl
    FLAGS += $(PTHREAD_FLAGS)
+   endif
 else ifeq ($(platform), osx)
    TARGET := $(TARGET_NAME)_libretro.dylib
    fpic := -fPIC
