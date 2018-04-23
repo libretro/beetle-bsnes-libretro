@@ -7,7 +7,7 @@ namespace SNES {
 
 #include "header.cpp"
 #include "gameboyheader.cpp"
-#include "serialization.cpp"
+#include "cartridge_serialization.cpp"
 
 namespace memory {
   MappedRAM cartrom, cartram, cartrtc;

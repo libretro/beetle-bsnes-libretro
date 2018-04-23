@@ -11,7 +11,7 @@ namespace SNES {
 
 Cx4 cx4;
 
-#include "serialization.cpp"
+#include "cx4_serialization.cpp"
 #include "data.cpp"
 #include "functions.cpp"
 #include "oam.cpp"

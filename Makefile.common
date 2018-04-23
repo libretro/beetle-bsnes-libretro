@@ -10,9 +10,6 @@ ifneq ($(HAVE_GRIFFIN),1)
 SOURCES_CXX += \
 	$(CORE_EMU_DIR)/interface.cpp \
 	$(CORE_EMU_DIR)/src/cartridge/cartridge.cpp \
-	$(CORE_EMU_DIR)/src/cartridge/header.cpp \
-	$(CORE_EMU_DIR)/src/cartridge/gameboyheader.cpp \
-	$(CORE_EMU_DIR)/src/cartridge/serialization.cpp \
 	$(CORE_EMU_DIR)/src/cheat/cheat.cpp \
 	$(CORE_EMU_DIR)/src/chip/srtc/srtc.cpp \
 	$(CORE_EMU_DIR)/src/chip/21fx/21fx.cpp \
@@ -21,11 +18,6 @@ SOURCES_CXX += \
 	$(CORE_EMU_DIR)/src/chip/bsx/bsx_cart.cpp \
 	$(CORE_EMU_DIR)/src/chip/bsx/bsx_flash.cpp \
 	$(CORE_EMU_DIR)/src/chip/cx4/cx4.cpp \
-	$(CORE_EMU_DIR)/src/chip/cx4/data.cpp \
-	$(CORE_EMU_DIR)/src/chip/cx4/functions.cpp \
-	$(CORE_EMU_DIR)/src/chip/cx4/oam.cpp \
-	$(CORE_EMU_DIR)/src/chip/cx4/opcodes.cpp \
-	$(CORE_EMU_DIR)/src/chip/cx4/serialization.cpp \
 	$(CORE_EMU_DIR)/src/chip/dsp1/dsp1.cpp \
 	$(CORE_EMU_DIR)/src/chip/dsp2/dsp2.cpp \
 	$(CORE_EMU_DIR)/src/chip/dsp3/dsp3.cpp \
@@ -40,7 +32,7 @@ SOURCES_CXX += \
 	$(CORE_EMU_DIR)/src/chip/superfx/superfx.cpp \
 	$(CORE_EMU_DIR)/src/chip/supergameboy/supergameboy.cpp \
 	$(CORE_EMU_DIR)/src/cpu/cpu.cpp \
-	$(CORE_EMU_DIR)/src/cpu/core/core.cpp \
+	$(CORE_EMU_DIR)/src/cpu/core/cpu_core.cpp \
 	$(CORE_EMU_DIR)/src/cpu/scpu/scpu.cpp \
 	$(CORE_EMU_DIR)/src/dsp/sdsp/sdsp.cpp \
 	$(CORE_EMU_DIR)/src/memory/memory.cpp \
