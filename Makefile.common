@@ -14,9 +14,6 @@ SOURCES_CXX += \
 	$(CORE_EMU_DIR)/src/chip/srtc/srtc.cpp \
 	$(CORE_EMU_DIR)/src/chip/21fx/21fx.cpp \
 	$(CORE_EMU_DIR)/src/chip/bsx/bsx.cpp \
-	$(CORE_EMU_DIR)/src/chip/bsx/bsx_base.cpp \
-	$(CORE_EMU_DIR)/src/chip/bsx/bsx_cart.cpp \
-	$(CORE_EMU_DIR)/src/chip/bsx/bsx_flash.cpp \
 	$(CORE_EMU_DIR)/src/chip/cx4/cx4.cpp \
 	$(CORE_EMU_DIR)/src/chip/dsp1/dsp1.cpp \
 	$(CORE_EMU_DIR)/src/chip/dsp2/dsp2.cpp \
