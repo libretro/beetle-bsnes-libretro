@@ -6,6 +6,7 @@
 #include	"mednafen/video/Deinterlacer.h"
 #endif
 #include "libretro.h"
+#include "mednafen/snes/src/base.hpp"
 
 static MDFNGI *game;
 
@@ -504,13 +505,16 @@ bool retro_unserialize(const void *data, size_t size)
    return MDFNSS_LoadSM(&st, 0, 0);
 }
 
-void *retro_get_memory_data(unsigned)
+void *retro_get_memory_data(unsigned type)
 {
+   if ( type == RETRO_MEMORY_SYSTEM_RAM )
+      return SNES::memory::wram.data();
    return NULL;
 }
-
-size_t retro_get_memory_size(unsigned)
+size_t retro_get_memory_size(unsigned type)
 {
+   if ( type == RETRO_MEMORY_SYSTEM_RAM )
+      return SNES::memory::wram.size();
    return 0;
 }
 
