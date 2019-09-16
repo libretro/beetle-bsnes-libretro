@@ -95,15 +95,8 @@ else ifeq ($(platform), classic_armv8_a35)
 	HAVE_NEON = 1
 	ARCH = arm
 	LDFLAGS += -ldl
-	ifeq ($(shell echo `$(CC) -dumpversion` "< 4.9" | bc -l), 1)
-	  CFLAGS += -march=armv8-a
-	else
-	  CFLAGS += -march=armv8-a
-	  # If gcc is 5.0 or later
-	  ifeq ($(shell echo `$(CC) -dumpversion` ">= 5" | bc -l), 1)
-	    LDFLAGS += -static-libgcc -static-libstdc++
-	  endif
-	endif
+	CFLAGS += -march=armv8-a
+	LDFLAGS += -static-libgcc -static-libstdc++
 #######################################
 
 else ifeq ($(platform), osx)
