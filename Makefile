@@ -132,9 +132,13 @@ else ifneq (,$(findstring ios,$(platform)))
 ifeq ($(IOSSDK),)
    IOSSDK := $(shell xcodebuild -version -sdk iphoneos Path)
 endif
-
-   CC = cc -arch armv7 -isysroot $(IOSSDK)
-   CXX = c++ -arch armv7 -isysroot $(IOSSDK)
+   ifeq ($(platform), ios-arm64)
+     CC = cc -arch arm64 -isysroot $(IOSSDK)
+     CXX = c++ -arch arm64 -isysroot $(IOSSDK)
+   else
+     CC = cc -arch armv7 -isysroot $(IOSSDK)
+     CXX = c++ -arch armv7 -isysroot $(IOSSDK)
+   endif
 IPHONEMINVER :=
 ifeq ($(platform),$(filter $(platform),ios9 ios-arm64))
 	IPHONEMINVER = -miphoneos-version-min=8.0
@@ -269,8 +273,8 @@ WINDOWS_VERSION=1
 
 else
    TARGET := $(TARGET_NAME)_libretro.dll
-   CC = gcc
-   CXX = g++
+   CC ?= gcc
+   CXX ?= g++
    IS_X86 = 1
    SHARED := -shared -Wl,--no-undefined -Wl,--version-script=link.T
    LDFLAGS += -static-libgcc -static-libstdc++ -lwinmm
@@ -311,13 +315,11 @@ CXXFLAGS += $(FLAGS)
 CFLAGS   += $(FLAGS)
 
 $(TARGET): $(OBJECTS)
-	@echo "** BUILDING $(TARGET) FOR PLATFORM $(platform) **"
 ifeq ($(STATIC_LINKING), 1)
 	$(AR) rcs $@ $(OBJECTS)
 else
 	$(CXX) -o $@ $^ $(LDFLAGS)
 endif
-	@echo "** BUILD SUCCESSFUL! GG NO RE **"
 
 %.o: %.cpp
 	$(CXX) -c -o $@ $< $(CXXFLAGS)
