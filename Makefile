@@ -121,7 +121,7 @@ else ifneq (,$(findstring ios,$(platform)))
    SHARED := -dynamiclib
    LDFLAGS += $(PTHREAD_FLAGS)
    FLAGS += $(PTHREAD_FLAGS)
-
+   CFLAGS += -DIOS
 ifeq ($(IOSSDK),)
    IOSSDK := $(shell xcodebuild -version -sdk iphoneos Path)
 endif
