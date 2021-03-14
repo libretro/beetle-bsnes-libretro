@@ -147,7 +147,7 @@ endif
 else ifeq ($(platform), tvos-arm64)
    EXT?=dylib
    TARGET := $(TARGET_NAME)_libretro_tvos.$(EXT)
-   fpic := -fPIC
+   fpic := -fPIC -DHAVE_POSIX_MEMALIGN=1
    SHARED := -dynamiclib
    DEFINES := -DIOS
    CFLAGS += -DIOS
