@@ -13,6 +13,9 @@ else ifneq ($(findstring Darwin,$(shell uname -a)),)
 ifeq ($(shell uname -p),powerpc)
    arch = ppc
 endif
+	ifeq ($(shell uname -p),arm)
+		arch = arm
+	endif
 else ifneq ($(findstring MINGW,$(shell uname -a)),)
    platform = win
 endif
@@ -38,11 +41,9 @@ ifeq ($(platform), unix)
       IS_X86 = 1
    endif
    ifneq ($(findstring Haiku,$(shell uname -s)),)
-   LDFLAGS += -lpthread -lroot
-   FLAGS += -lpthread
+   LDFLAGS += -lroot
    else
-   LDFLAGS += $(PTHREAD_FLAGS) -ldl
-   FLAGS += $(PTHREAD_FLAGS)
+   LDFLAGS += -ldl
    endif
 
 # Classic Platforms ####################
@@ -103,8 +104,7 @@ else ifeq ($(platform), osx)
    TARGET := $(TARGET_NAME)_libretro.dylib
    fpic := -fPIC
    SHARED := -dynamiclib
-   LDFLAGS += $(PTHREAD_FLAGS)
-   FLAGS += $(PTHREAD_FLAGS)
+   MINVERSION :=
 ifeq ($(arch),ppc)
    ENDIANNESS_DEFINES := -DMSB_FIRST
    OLD_GCC := 1
@@ -112,10 +112,11 @@ endif
    OSXVER = `sw_vers -productVersion | cut -d. -f 2`
    OSX_LT_MAVERICKS = `(( $(OSXVER) <= 9)) && echo "YES"`
    ifeq ($(OSX_LT_MAVERICKS),"YES")
-      fpic += -mmacosx-version-min=10.1
+      MINVERSION = -mmacosx-version-min=10.1
    else
       fpic += -stdlib=libc++
    endif
+   fpic += $(MINVERSION)
 
 # iOS
 else ifneq (,$(findstring ios,$(platform)))
@@ -123,8 +124,6 @@ else ifneq (,$(findstring ios,$(platform)))
    TARGET := $(TARGET_NAME)_libretro_ios.dylib
    fpic := -fPIC -DHAVE_POSIX_MEMALIGN=1
    SHARED := -dynamiclib
-   LDFLAGS += $(PTHREAD_FLAGS)
-   FLAGS += $(PTHREAD_FLAGS)
    CFLAGS += -DIOS
 ifeq ($(IOSSDK),)
    IOSSDK := $(shell xcodebuild -version -sdk iphoneos Path)
@@ -144,14 +143,24 @@ else
 endif
    LDFLAGS += $(IPHONEMINVER)
    FLAGS += $(IPHONEMINVER)
-   CC += $(IPHONEMINVER)
-   CXX += $(IPHONEMINVER)
+
+else ifeq ($(platform), tvos-arm64)
+   EXT?=dylib
+   TARGET := $(TARGET_NAME)_libretro_tvos.$(EXT)
+   fpic := -fPIC
+   SHARED := -dynamiclib
+   DEFINES := -DIOS
+   CFLAGS += -DIOS
+ifeq ($(IOSSDK),)
+   IOSSDK := $(shell xcodebuild -version -sdk appletvos Path)
+endif
+   CC = cc -arch arm64 -isysroot $(IOSSDK)
+   CXX = c++ -arch arm64 -isysroot $(IOSSDK)
+
 else ifeq ($(platform), qnx)
    TARGET := $(TARGET_NAME)_libretro_$(platform).so
    fpic := -fPIC
    SHARED := -lcpp -lm -shared -Wl,--no-undefined -Wl,--version-script=link.T
-   #LDFLAGS += $(PTHREAD_FLAGS)
-   #FLAGS += $(PTHREAD_FLAGS)
    CC = qcc -Vgcc_ntoarmv7le
    CXX = QCC -Vgcc_ntoarmv7le_cpp
    AR = QCC -Vgcc_ntoarmv7le
@@ -196,7 +205,7 @@ else ifeq ($(platform), xenon)
    CXX = xenon-g++$(EXE_EXT)
    AR = xenon-ar$(EXE_EXT)
    ENDIANNESS_DEFINES += -D__LIBXENON__ -m32 -D__ppc__ -DMSB_FIRST
-   LIBS := $(PTHREAD_FLAGS)
+   LIBS := 
    STATIC_LINKING = 1
 else ifeq ($(platform), ngc)
    TARGET := $(TARGET_NAME)_libretro_$(platform).a
@@ -221,8 +230,6 @@ else ifneq (,$(findstring armv,$(platform)))
    fpic := -fPIC
    SHARED := -shared -Wl,--no-undefined -Wl,--version-script=link.T
    CC = gcc
-   LDFLAGS += $(PTHREAD_FLAGS)
-   FLAGS += $(PTHREAD_FLAGS)
    IS_X86 = 0
 ifneq (,$(findstring cortexa8,$(platform)))
    FLAGS += -marm -mcpu=cortex-a8
