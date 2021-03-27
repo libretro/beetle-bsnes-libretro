@@ -117,6 +117,7 @@ endif
       fpic += -stdlib=libc++
    endif
    fpic += $(MINVERSION)
+   fpic += -DHAVE_POSIX_MEMALIGN=1
 
    ifeq ($(CROSS_COMPILE),1)
 		TARGET_RULE   = -target $(LIBRETRO_APPLE_PLATFORM) -isysroot $(LIBRETRO_APPLE_ISYSROOT)
