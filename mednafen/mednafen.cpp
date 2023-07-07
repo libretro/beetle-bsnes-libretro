@@ -22,6 +22,8 @@
 #include	<errno.h>
 #include	<list>
 #include	<algorithm>
+#include <array>
+#include <vector>
 
 #include	"general.h"
 
@@ -198,8 +200,6 @@ static uint8 lastchar = 0;
 
 void MDFN_printf(const char *format, ...)
 {
-   char *format_temp;
-   char *temp;
    unsigned int x, newlen;
 
    va_list ap;
@@ -220,7 +220,7 @@ void MDFN_printf(const char *format, ...)
       lastchar = format[x];
    }
 
-   format_temp = (char *)malloc(newlen + 1); // Length + NULL character, duh
+   std::vector<char> format_temp(newlen + 1); // Length + NULL character, duh
 
    // Now, construct our format_temp string
    lastchar = lastchar_backup; // Restore lastchar
@@ -238,44 +238,36 @@ void MDFN_printf(const char *format, ...)
 
    format_temp[newlen] = 0;
 
-   temp = new char[4096];
-   vsnprintf(temp, 4096, format_temp, ap);
-   free(format_temp);
+   std::array<char, 4096> temp;
+   vsnprintf(temp.data(), temp.size(), format_temp.data(), ap);
 
-   MDFND_Message(temp);
-   free(temp);
+   MDFND_Message(temp.data());
 
    va_end(ap);
 }
 
 void MDFN_PrintError(const char *format, ...)
 {
- char *temp;
-
  va_list ap;
 
  va_start(ap, format);
 
- temp = new char[4096];
- vsnprintf(temp, 4096, format, ap);
- MDFND_PrintError(temp);
- free(temp);
+ std::array<char, 4096> temp;
+ vsnprintf(temp.data(), temp.size(), format, ap);
+ MDFND_PrintError(temp.data());
 
  va_end(ap);
 }
 
 void MDFN_DebugPrintReal(const char *file, const int line, const char *format, ...)
 {
- char *temp;
-
  va_list ap;
 
  va_start(ap, format);
 
- temp = new char[4096];
- vsnprintf(temp, 4096, format, ap);
- fprintf(stderr, "%s:%d  %s\n", file, line, temp);
- free(temp);
+ std::array<char, 4096> temp;
+ vsnprintf(temp.data(), temp.size(), format, ap);
+ fprintf(stderr, "%s:%d  %s\n", file, line, temp.data());
 
  va_end(ap);
 }
