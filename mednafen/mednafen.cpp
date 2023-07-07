@@ -220,7 +220,7 @@ void MDFN_printf(const char *format, ...)
       lastchar = format[x];
    }
 
-   format_temp = (char *)malloc(newlen + 1); // Length + NULL character, duh
+   format_temp = new char[newlen + 1]; // Length + NULL character, duh
 
    // Now, construct our format_temp string
    lastchar = lastchar_backup; // Restore lastchar
@@ -240,10 +240,10 @@ void MDFN_printf(const char *format, ...)
 
    temp = new char[4096];
    vsnprintf(temp, 4096, format_temp, ap);
-   free(format_temp);
+   delete[] format_temp;
 
    MDFND_Message(temp);
-   free(temp);
+   delete[] temp;
 
    va_end(ap);
 }
@@ -259,7 +259,7 @@ void MDFN_PrintError(const char *format, ...)
  temp = new char[4096];
  vsnprintf(temp, 4096, format, ap);
  MDFND_PrintError(temp);
- free(temp);
+ delete[] temp;
 
  va_end(ap);
 }
@@ -275,7 +275,7 @@ void MDFN_DebugPrintReal(const char *file, const int line, const char *format, .
  temp = new char[4096];
  vsnprintf(temp, 4096, format, ap);
  fprintf(stderr, "%s:%d  %s\n", file, line, temp);
- free(temp);
+ delete[] temp;
 
  va_end(ap);
 }
