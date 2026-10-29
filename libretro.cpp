@@ -392,13 +392,6 @@ void retro_deinit(void)
 {
    if (surf)
    {
-#if defined(WANT_32BPP)
-      if (surf->pixels)
-         free(surf->pixels);
-#elif defined(WANT_16BPP)
-      if (surf->pixels16)
-         free(surf->pixels16);
-#endif
       delete surf;
    }
    surf = NULL;
